@@ -1,12 +1,12 @@
 <?php
 
-namespace VendorName\ExamplePackage\Providers;
+namespace Imagewize\SageNativeBlock\Providers;
 
 use Illuminate\Support\ServiceProvider;
-use VendorName\ExamplePackage\Console\ExampleCommand;
-use VendorName\ExamplePackage\Example;
+use Imagewize\SageNativeBlock\Console\ExampleCommand;
+use Imagewize\SageNativeBlock\Example;
 
-class ExampleServiceProvider extends ServiceProvider
+class SageNativeBlockServiceProvider extends ServiceProvider
 {
     /**
      * Register any application services.
@@ -15,13 +15,13 @@ class ExampleServiceProvider extends ServiceProvider
      */
     public function register()
     {
-        $this->app->singleton('Example', function () {
+        $this->app->singleton('SageNativeBlock', function () {
             return new Example($this->app);
         });
 
         $this->mergeConfigFrom(
-            __DIR__.'/../../config/example.php',
-            'example'
+            __DIR__.'/../../config/sage-native-block.php',
+            'sage-native-block'
         );
     }
 
@@ -33,18 +33,18 @@ class ExampleServiceProvider extends ServiceProvider
     public function boot()
     {
         $this->publishes([
-            __DIR__.'/../../config/example.php' => $this->app->configPath('example.php'),
+            __DIR__.'/../../config/sage-native-block.php' => $this->app->configPath('sage-native-block.php'),
         ], 'config');
 
         $this->loadViewsFrom(
             __DIR__.'/../../resources/views',
-            'Example',
+            'SageNativeBlock',
         );
 
         $this->commands([
-            ExampleCommand::class,
+            SageNativeBlockCommand::class,
         ]);
 
-        $this->app->make('Example');
+        $this->app->make('SageNativeBlock');
     }
 }
