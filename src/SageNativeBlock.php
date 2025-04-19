@@ -17,7 +17,6 @@ class SageNativeBlock
     /**
      * Create a new SageNativeBlock instance.
      *
-     * @param  \Roots\Acorn\Application  $app
      * @return void
      */
     public function __construct(Application $app)

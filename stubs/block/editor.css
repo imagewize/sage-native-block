@@ -1,0 +1,13 @@
+/**
+ * Editor-specific styles.
+ */
+ .wp-block-vendor-example-block {
+    /* Editor-only border to make the block more visible when editing */
+    border: 2px dashed #007cba;
+  }
+  
+  /* Style for editor placeholder content */
+  .wp-block-vendor-example-block p:first-of-type {
+    color: #757575;
+    font-style: italic;
+  }

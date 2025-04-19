@@ -138,7 +138,7 @@ foreach ($files as $file) {
         'ExamplePackage' => $className,
         'example' => $packageSlug,
         ':package_description' => $description,
-        ':class_name' => $className
+        ':class_name' => $className,
     ]);
 
     match (true) {
