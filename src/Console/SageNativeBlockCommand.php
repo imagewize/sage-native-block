@@ -39,7 +39,8 @@ class SageNativeBlockCommand extends Command
      */
     protected $signature = 'sage-native-block:add-setup 
                             {blockName? : The name of the block (e.g., "my-block" or "vendor/my-block"), defaults to example-block}
-                            {--force : Force the operation to run without confirmation}';
+                            {--force : Force the operation to run without confirmation}
+                            {--vendor= : Override the default vendor prefix for the block}';
 
     /**
      * The console command description.
@@ -113,11 +114,14 @@ class SageNativeBlockCommand extends Command
     {
         // Get block name from argument or use default
         $blockNameInput = $this->argument('blockName') ?: 'example-block';
+        
+        // Get vendor prefix from option or config
+        $vendorPrefix = $this->option('vendor') ?: config('sage-native-block.default_vendor_prefix');
 
         // Ensure block name always has a vendor prefix
         if (!str_contains($blockNameInput, '/')) {
-            $fullBlockName = 'vendor/' . $blockNameInput;
-            $this->info("No vendor prefix provided. Using default: '{$fullBlockName}'");
+            $fullBlockName = $vendorPrefix . '/' . $blockNameInput;
+            $this->info("Using vendor prefix: '{$vendorPrefix}' for block name: '{$fullBlockName}'");
         } else {
             $fullBlockName = $blockNameInput;
         }
@@ -219,14 +223,20 @@ class SageNativeBlockCommand extends Command
      */
     protected function getBlockRegistrationCode(): string
     {
+        // Get the block directory path from config
+        $blockDirPath = config('sage-native-block.block_directory', 'resources/js/blocks');
+        
+        // Convert relative path to show in PHP code
+        $relativePath = str_replace('\'', '\\\'', $blockDirPath);
+        
         return <<<PHP
 
 /**
  * Register block types using block.json metadata from the theme's blocks directory.
- * This function will scan the 'resources/js/blocks' directory for block.json files.
+ * This function will scan the '{$relativePath}' directory for block.json files.
  */
 add_action('init', function () {
-    \$blocks_dir = get_template_directory() . '/resources/js/blocks';
+    \$blocks_dir = get_template_directory() . '/{$relativePath}';
     if (!is_dir(\$blocks_dir)) {
         return;
     }
@@ -259,8 +269,11 @@ PHP;
             // Source stub directory
             $stubsDir = dirname(__DIR__, 2).'/stubs/block';
 
+            // Get block directory path from config
+            $blockDirPath = config('sage-native-block.block_directory', 'resources/js/blocks');
+            
             // Target directory in the theme using the directoryBlockName
-            $targetDir = $this->resolvePath($rootsFiles, "resources/js/blocks/{$directoryBlockName}");
+            $targetDir = $this->resolvePath($rootsFiles, "{$blockDirPath}/{$directoryBlockName}");
 
             // Verify the target path is within the theme
             $this->line("Target directory will be: {$targetDir}");
@@ -273,20 +286,27 @@ PHP;
                  $this->warn("Target directory already exists: {$targetDir}. Files will be overwritten.");
             }
 
-            // Files to copy
+            // Files to copy with their template config keys
             $files = [
-                'block.json',
-                'index.js',
-                'editor.jsx',
-                'save.jsx',
-                'editor.css',
-                'style.css',
-                'view.js',
+                'block.json' => 'block_json',
+                'index.js' => 'index_js',
+                'editor.jsx' => 'editor_jsx',
+                'save.jsx' => 'save_jsx',
+                'editor.css' => 'editor_css',
+                'style.css' => 'style_css',
+                'view.js' => 'view_js',
             ];
 
             // Copy each file
-            foreach ($files as $file) {
-                $source = "{$stubsDir}/{$file}";
+            foreach ($files as $file => $configKey) {
+                // Check if a custom template is defined in config
+                $customTemplatePath = config("sage-native-block.templates.{$configKey}");
+                
+                // Use custom template if defined and exists, otherwise use default stub
+                $source = $customTemplatePath && file_exists($customTemplatePath) 
+                    ? $customTemplatePath 
+                    : "{$stubsDir}/{$file}";
+                
                 $target = "{$targetDir}/{$file}";
 
                 if ($this->files->exists($source)) {
@@ -306,7 +326,7 @@ PHP;
                     }
                     
                     $this->files->put($target, $content);
-                    $this->line("Copied and processed: {$file}");
+                    $this->line("Copied and processed: {$file}" . ($customTemplatePath ? " (using custom template)" : ""));
                 } else {
                     $this->warn("Source file not found: {$source}");
                 }

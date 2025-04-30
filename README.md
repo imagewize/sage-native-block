@@ -26,6 +26,48 @@ wp acorn vendor:publish --provider="Imagewize\SageNativeBlockPackage\Providers\S
 ```
 **NB** Currently not necessary as we don't have any config options yet.
 
+## Configuration
+
+You can publish the config file with:
+
+```shell
+wp acorn vendor:publish --provider="Imagewize\SageNativeBlockPackage\Providers\SageNativeBlockServiceProvider" --tag="config"
+```
+
+After publishing the configuration, you can customize the following options in `config/sage-native-block.php`:
+
+### Default Vendor Prefix
+
+```php
+'default_vendor_prefix' => 'vendor',
+```
+
+This sets the default vendor prefix used when creating blocks without a specified vendor prefix. Instead of manually typing your vendor prefix each time, you can set it once in the config.
+
+### Block Directory Path
+
+```php
+'block_directory' => 'resources/js/blocks',
+```
+
+This defines where block files will be created within your Sage theme. By default, blocks are placed in `resources/js/blocks`, but you can customize this to your preferred location.
+
+### Template Customization
+
+```php
+'templates' => [
+    'block_json' => null,    // Path to custom block.json template
+    'index_js' => null,      // Path to custom index.js template
+    'editor_jsx' => null,    // Path to custom editor.jsx template
+    'save_jsx' => null,      // Path to custom save.jsx template
+    'editor_css' => null,    // Path to custom editor.css template
+    'style_css' => null,     // Path to custom style.css template
+    'view_js' => null,       // Path to custom view.js template
+],
+```
+
+Each template can be customized by providing a path to your own version. This allows you to create blocks with your own standardized structure, coding patterns, or additional features.
+
 ## Usage
 
 ### Creating a new block
@@ -69,6 +111,18 @@ Use the `--force` flag to skip the confirmation prompt:
 $ wp acorn sage-native-block:add-setup --force
 $ wp acorn sage-native-block:add-setup my-block-name --force
 $ wp acorn sage-native-block:add-setup imagewize/custom-block --force
+```
+
+## Command Options
+
+When creating blocks, you can override the defaults set in the configuration:
+
+```shell
+# Using configuration defaults
+wp acorn sage-native-block:add-setup my-block
+
+# Override the vendor prefix from command line
+wp acorn sage-native-block:add-setup my-block --vendor=custom-vendor
 ```
 
 ## Block Structure
