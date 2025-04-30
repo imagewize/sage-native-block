@@ -22,8 +22,9 @@ composer require imagewize/sage-native-block
 You can publish the config file with:
 
 ```shell
-wp acorn vendor:publish --provider="Imagewize\SageNativeBlockPackage\Providers\SageNativeBlockServiceProvider"
+wp acorn vendor:publish --provider="Imagewize\SageNativeBlockPackage\Providers\SageNativeBlockServiceProvider" --tag="config"
 ```
+**NB** Currently not necessary as we don't have any config options yet.
 
 ## Usage
 
