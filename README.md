@@ -22,7 +22,7 @@ composer require imagewize/sage-native-block
 You can publish the config file with:
 
 ```shell
-$ wp acorn vendor:publish --provider="Imagewize\SageNativeBlockPackage\Providers\SageNativeBlockServiceProvider"
+wp acorn vendor:publish --provider="Imagewize\SageNativeBlockPackage\Providers\SageNativeBlockServiceProvider"
 ```
 
 ## Usage
@@ -32,7 +32,7 @@ $ wp acorn vendor:publish --provider="Imagewize\SageNativeBlockPackage\Providers
 Run the sage-native-block command to create a block with default settings:
 
 ```shell
-$ wp acorn sage-native-block:add-setup
+wp acorn sage-native-block:add-setup
 ```
 
 This will:
@@ -45,7 +45,7 @@ This will:
 To create a block with a custom name:
 
 ```shell
-$ wp acorn sage-native-block:add-setup my-cool-block
+wp acorn sage-native-block:add-setup my-cool-block
 ```
 
 This will create a block named `vendor/my-cool-block` with all the necessary files.
