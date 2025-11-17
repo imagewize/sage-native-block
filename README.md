@@ -1,5 +1,9 @@
 # Acorn Sage Native Block Package
 
+[![Total Downloads](https://img.shields.io/packagist/dt/imagewize/sage-native-block.svg)](https://packagist.org/packages/imagewize/sage-native-block)
+[![Latest Stable Version](https://img.shields.io/packagist/v/imagewize/sage-native-block.svg)](https://packagist.org/packages/imagewize/sage-native-block)
+[![License](https://img.shields.io/packagist/l/imagewize/sage-native-block.svg)](https://packagist.org/packages/imagewize/sage-native-block)
+
 This package helps you create and manage native Gutenberg blocks in your [Sage](https://roots.io/sage/) theme. It provides a convenient command to scaffold block files and automatically register them with WordPress.
 
 ## Features
