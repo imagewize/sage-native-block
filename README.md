@@ -154,12 +154,13 @@ Real-world examples from production themes. Currently featuring templates from t
 
 | Template | Description | Use Case |
 |----------|-------------|----------|
+| **nynaeve-basic** | Clean starting point with all Nynaeve standards — correct category, supports, margin reset, SVG image import pattern | **Start here** for any new Nynaeve block |
 | **nynaeve-innerblocks** | Pre-styled with Nynaeve typography | Production-ready container |
 | **nynaeve-two-column** | Card-style layout from Nynaeve | Polished two-column sections |
 | **nynaeve-statistics** | Complete statistics from Nynaeve | Production-ready stats display |
 | **nynaeve-cta** | Styled CTA from Nynaeve theme | Ready-to-use call-to-action |
 
-> 💡 **Tip:** Use generic templates for universal compatibility, or Nynaeve templates if your theme matches its setup. See [`stubs/themes/nynaeve/README.md`](stubs/themes/nynaeve/README.md) for detailed requirements.
+> 💡 **Tip:** Use `nynaeve-basic` as your starting point for all new Nynaeve blocks — it scaffolds with the correct `imagewize` category, `editorScript`, full `supports`, `align: "full"` default, and margin-reset attribute. No manual cleanup needed. See [`stubs/themes/nynaeve/README.md`](stubs/themes/nynaeve/README.md) for detailed requirements.
 
 ### Command Examples
 
@@ -188,6 +189,7 @@ wp acorn sage-native-block:create my-columns --template=two-column --force
 wp acorn sage-native-block:create my-container --template=innerblocks --force
 
 # Nynaeve theme templates (requires Nynaeve theme.json setup)
+wp acorn sage-native-block:create imagewize/my-block --template=nynaeve-basic --force
 wp acorn sage-native-block:create my-stats --template=nynaeve-statistics --force
 wp acorn sage-native-block:create imagewize/my-cta --template=nynaeve-cta --force
 ```

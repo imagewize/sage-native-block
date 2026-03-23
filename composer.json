@@ -20,6 +20,9 @@
   "require-dev": {
     "laravel/pint": "^1.20"
   },
+  "scripts": {
+    "pint": "./vendor/bin/pint"
+  },
   "extra": {
     "acorn": {
       "providers": [

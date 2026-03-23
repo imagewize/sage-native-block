@@ -3,8 +3,8 @@
 namespace Imagewize\SageNativeBlockPackage\Providers;
 
 use Illuminate\Support\ServiceProvider;
-use Imagewize\SageNativeBlockPackage\Console\SageNativeBlockCommand;
 use Imagewize\SageNativeBlockPackage\Console\SageNativeBlockAddSetupCommand;
+use Imagewize\SageNativeBlockPackage\Console\SageNativeBlockCommand;
 
 class SageNativeBlockServiceProvider extends ServiceProvider
 {

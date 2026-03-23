@@ -61,6 +61,12 @@ return [
         // Nynaeve Theme Templates (by Imagewize)
         // Based on production Nynaeve theme - requires specific theme.json setup
         // See: stubs/themes/nynaeve/README.md for requirements
+        'nynaeve-basic' => [
+            'name' => 'Basic Block',
+            'description' => 'Clean starting point — imagewize category, full supports, margin reset, SVG image import pattern',
+            'stub_path' => 'themes/nynaeve/basic',
+            'category' => 'nynaeve',
+        ],
         'nynaeve-innerblocks' => [
             'name' => 'InnerBlocks',
             'description' => 'From Nynaeve theme - montserrat, open-sans fonts',
