@@ -7,6 +7,23 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [2.1.0] - 2026-03-23
+
+### Added
+
+- **`nynaeve-basic` Template** - Clean starting point for Nynaeve theme blocks with all project standards baked in
+  - `block.json` uses `imagewize` category, includes `editorScript`, full `supports` (align wide/full, anchor, spacing, color), `align: "full"` default, and margin-reset attribute (`margin-top: 0, margin-bottom: 0`) to prevent WordPress layout gaps
+  - `editor.jsx` ships with `{{BLOCK_CLASS_NAME}}` placeholder, an empty TEMPLATE with inline documentation showing how to import SVG assets via `core/image` blocks (Vite URL import pattern)
+  - `save.jsx` uses `{{BLOCK_CLASS_NAME}}` placeholder and clean `<InnerBlocks.Content />`
+  - `style.css` and `editor.css` use `{{BLOCK_CLASS_NAME}}` placeholder with a note on vertical-only padding (no horizontal padding — WordPress layout handles that via `theme.json`)
+  - Registered in config as first entry under the `nynaeve` category
+
+### Fixed
+
+- **CSS class placeholder in `nynaeve-*` stubs** - `replaceCssClassName()` now handles the `{{BLOCK_CLASS_NAME}}` placeholder used in newer stub files in addition to the legacy `.wp-block-vendor-example-block` selector
+  - Previously, `style.css` and `editor.css` in `nynaeve-*` stubs that used `{{BLOCK_CLASS_NAME}}` were not having their class name replaced on scaffold
+  - Both placeholder styles now work correctly in the same pass
+
 ## [2.0.2] - 2025-11-17
 
 ### Added
@@ -227,7 +244,8 @@ Templates automatically appear in the category selection menu on next run.
 - Configuration documentation
 - Feature overview and examples
 
-[Unreleased]: https://github.com/imagewize/sage-native-block/compare/v2.0.2...HEAD
+[Unreleased]: https://github.com/imagewize/sage-native-block/compare/v2.1.0...HEAD
+[2.1.0]: https://github.com/imagewize/sage-native-block/compare/v2.0.2...v2.1.0
 [2.0.2]: https://github.com/imagewize/sage-native-block/compare/v2.0.1...v2.0.2
 [2.0.1]: https://github.com/imagewize/sage-native-block/compare/v2.0.0...v2.0.1
 [2.0.0]: https://github.com/imagewize/sage-native-block/compare/v1.1.0...v2.0.0
