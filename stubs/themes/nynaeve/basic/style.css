@@ -1,0 +1,7 @@
+.{{BLOCK_CLASS_NAME}} {
+  /* Block styles — vertical padding only, no horizontal padding.
+   * WordPress layout handles horizontal spacing automatically via theme.json.
+   * See: docs/CONTENT-WIDTH-AND-LAYOUT.md
+   */
+  padding: 80px 0;
+}
