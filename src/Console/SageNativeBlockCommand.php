@@ -469,9 +469,14 @@ PHP;
     {
         // Generate class name like wp-block-vendor-block-name or wp-block-block-name
         $className = 'wp-block-' . str_replace('/', '-', $fullBlockName);
-        
-        // Replace the placeholder class. No need to escape the replacement string.
-        return preg_replace('/\.wp-block-vendor-example-block/', ".{$className}", $content);
+
+        // Replace {{BLOCK_CLASS_NAME}} placeholder (used in nynaeve-* stubs)
+        $content = str_replace('{{BLOCK_CLASS_NAME}}', $className, $content);
+
+        // Replace legacy .wp-block-vendor-example-block placeholder (used in older stubs)
+        $content = preg_replace('/\.wp-block-vendor-example-block/', ".{$className}", $content);
+
+        return $content;
     }
     
     /**
