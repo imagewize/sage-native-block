@@ -59,13 +59,9 @@ class SageNativeBlockCommand extends Command
         parent::__construct();
         $this->files = $files;
     }
-    
+
     /**
      * Resolve the theme path using RootsFilesystem or fallback to WordPress methods
-     *
-     * @param RootsFilesystem $rootsFiles
-     * @param string $relativePath
-     * @return string
      */
     protected function resolvePath(RootsFilesystem $rootsFiles, string $relativePath = ''): string
     {
@@ -77,26 +73,26 @@ class SageNativeBlockCommand extends Command
         } catch (\Exception $e) {
             // Fallback to WordPress methods
         }
-        
+
         // First fallback: WordPress functions
         if (function_exists('get_template_directory')) {
             $themePath = get_template_directory();
-            
-            if (!empty($relativePath)) {
-                return $themePath . '/' . $relativePath;
+
+            if (! empty($relativePath)) {
+                return $themePath.'/'.$relativePath;
             }
-            
+
             return $themePath;
         }
-        
+
         // Last resort: Try to detect the theme path from the command location
         $commandPath = dirname(__DIR__, 5); // Adjust if needed
         $this->warn("Using detected theme path: {$commandPath}");
-        
-        if (!empty($relativePath)) {
-            return $commandPath . '/' . $relativePath;
+
+        if (! empty($relativePath)) {
+            return $commandPath.'/'.$relativePath;
         }
-        
+
         return $commandPath;
     }
 
@@ -108,7 +104,7 @@ class SageNativeBlockCommand extends Command
         // Interactive mode: prompt for block name if not provided
         $blockNameInput = $this->argument('blockName');
 
-        if (!$blockNameInput) {
+        if (! $blockNameInput) {
             $this->newLine();
             $this->line('<fg=cyan>Welcome to Sage Native Block Creator!</>');
             $this->line('━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━');
@@ -118,24 +114,25 @@ class SageNativeBlockCommand extends Command
 
             if (empty($blockNameInput)) {
                 $this->error('Block name is required.');
+
                 return static::FAILURE;
             }
         }
 
         // Ensure block name always has a vendor prefix
-        if (!str_contains($blockNameInput, '/')) {
+        if (! str_contains($blockNameInput, '/')) {
             $defaultVendor = 'vendor';
 
             // Only prompt for vendor if in interactive mode
-            if (!$this->argument('blockName')) {
+            if (! $this->argument('blockName')) {
                 $vendor = $this->ask("Enter vendor prefix (leave empty for '{$defaultVendor}')");
-                $vendor = !empty($vendor) ? $vendor : $defaultVendor;
+                $vendor = ! empty($vendor) ? $vendor : $defaultVendor;
             } else {
                 $vendor = $defaultVendor;
                 $this->comment("No vendor prefix provided. Using default: '{$vendor}'");
             }
 
-            $fullBlockName = $vendor . '/' . $blockNameInput;
+            $fullBlockName = $vendor.'/'.$blockNameInput;
         } else {
             $fullBlockName = $blockNameInput;
         }
@@ -152,8 +149,9 @@ class SageNativeBlockCommand extends Command
         }
 
         // Validate template exists
-        if (!$this->isValidTemplate($template)) {
+        if (! $this->isValidTemplate($template)) {
             $this->error("Template '{$template}' not found in configuration.");
+
             return static::FAILURE;
         }
 
@@ -177,7 +175,7 @@ class SageNativeBlockCommand extends Command
         $setupPath = $this->resolvePath($rootsFiles, 'app/setup.php');
 
         if (! $this->files->exists($setupPath)) {
-            $this->error("Error: Theme setup file not found at app/setup.php");
+            $this->error('Error: Theme setup file not found at app/setup.php');
 
             return static::FAILURE;
         }
@@ -203,7 +201,7 @@ class SageNativeBlockCommand extends Command
 
         try {
             // Append the code to the file only if it's not already there
-            if (!$setupExists) {
+            if (! $setupExists) {
                 $backupPath = $setupPath.'.backup-'.date('Y-m-d-His');
                 $this->files->copy($setupPath, $backupPath);
 
@@ -214,6 +212,7 @@ class SageNativeBlockCommand extends Command
                     if ($backupPath) {
                         $this->files->copy($backupPath, $setupPath);
                     }
+
                     return static::FAILURE;
                 }
             } else {
@@ -234,12 +233,13 @@ class SageNativeBlockCommand extends Command
             // Copy block template files using the full name for replacements and directory name for path
             $filesCopied = $this->copyBlockStubs($rootsFiles, $fullBlockName, $directoryBlockName, $template);
 
-            if (!$filesCopied) {
-                 // If copying fails, potentially revert setup.php if it was modified in this run
-                 if ($backupPath && $this->files->exists($backupPath)) {
+            if (! $filesCopied) {
+                // If copying fails, potentially revert setup.php if it was modified in this run
+                if ($backupPath && $this->files->exists($backupPath)) {
                     $this->error('  ✗ Failed to copy files. Reverting changes...');
                     $this->files->copy($backupPath, $setupPath);
                 }
+
                 return static::FAILURE;
             }
 
@@ -272,8 +272,10 @@ class SageNativeBlockCommand extends Command
     {
         if (str_contains($fullBlockName, '/')) {
             $parts = explode('/', $fullBlockName);
+
             return end($parts);
         }
+
         return $fullBlockName;
     }
 
@@ -282,29 +284,29 @@ class SageNativeBlockCommand extends Command
      */
     protected function getBlockRegistrationCode(): string
     {
-        return <<<PHP
+        return <<<'PHP'
 
 /**
  * Register block types using block.json metadata from the theme's blocks directory.
  * This function will scan the 'resources/js/blocks' directory for block.json files.
  */
 add_action('init', function () {
-    \$blocks_dir = get_template_directory() . '/resources/js/blocks';
-    if (!is_dir(\$blocks_dir)) {
+    $blocks_dir = get_template_directory() . '/resources/js/blocks';
+    if (!is_dir($blocks_dir)) {
         return;
     }
 
-    \$block_folders = scandir(\$blocks_dir);
+    $block_folders = scandir($blocks_dir);
 
-    foreach (\$block_folders as \$folder) {
-        if (\$folder === '.' || \$folder === '..') {
+    foreach ($block_folders as $folder) {
+        if ($folder === '.' || $folder === '..') {
             continue;
         }
 
-        \$block_json_path = \$blocks_dir . '/' . \$folder . '/block.json';
+        $block_json_path = $blocks_dir . '/' . $folder . '/block.json';
 
-        if (file_exists(\$block_json_path)) {
-            register_block_type(\$block_json_path);
+        if (file_exists($block_json_path)) {
+            register_block_type($block_json_path);
         }
     }
 }, 10);
@@ -325,15 +327,16 @@ PHP;
 
             // Check if this is a theme template (from block-templates/)
             if ($this->isThemeTemplate($template)) {
-                $stubsDir = get_template_directory() . '/block-templates/' . $stubPath;
+                $stubsDir = get_template_directory().'/block-templates/'.$stubPath;
             } else {
                 // Package template - use stubs directory
-                $stubsDir = dirname(__DIR__, 2) . '/stubs/' . $stubPath;
+                $stubsDir = dirname(__DIR__, 2).'/stubs/'.$stubPath;
             }
 
             // Validate the directory exists
-            if (!$this->files->isDirectory($stubsDir)) {
+            if (! $this->files->isDirectory($stubsDir)) {
                 $this->error("Template directory not found: {$stubsDir}");
+
                 return false;
             }
 
@@ -412,7 +415,7 @@ PHP;
             return false;
         }
     }
-    
+
     /**
      * Replace placeholders in block.json content with the provided full block name.
      */
@@ -422,6 +425,7 @@ PHP;
 
         if (json_last_error() !== JSON_ERROR_NONE) {
             $this->warn('Could not parse block.json stub, using it as is.');
+
             return $content;
         }
 
@@ -434,8 +438,8 @@ PHP;
             $actualBlockName = $parts[1];
         } else {
             // This case should ideally not be reached due to logic in handle()
-             $this->warn("Block name '{$fullBlockName}' unexpectedly lacks a vendor prefix during replacement. Defaulting vendor to 'vendor'.");
-             $actualBlockName = $fullBlockName; // Use the full name as the actual name
+            $this->warn("Block name '{$fullBlockName}' unexpectedly lacks a vendor prefix during replacement. Defaulting vendor to 'vendor'.");
+            $actualBlockName = $fullBlockName; // Use the full name as the actual name
         }
 
         // Update the name field
@@ -450,25 +454,25 @@ PHP;
 
         // Update textdomain to match the determined vendor
         if (isset($data['textdomain'])) { // Check if textdomain key exists in stub
-             $data['textdomain'] = $vendor;
+            $data['textdomain'] = $vendor;
         }
 
         // Update the className default
         if (isset($data['attributes']['className']['default'])) {
-            $className = 'wp-block-' . str_replace('/', '-', $fullBlockName);
+            $className = 'wp-block-'.str_replace('/', '-', $fullBlockName);
             $data['attributes']['className']['default'] = $className;
         }
 
         return json_encode($data, JSON_PRETTY_PRINT | JSON_UNESCAPED_SLASHES);
     }
-    
+
     /**
      * Replace example CSS class name with the generated class name based on the full block name.
      */
     protected function replaceCssClassName(string $content, string $fullBlockName): string
     {
         // Generate class name like wp-block-vendor-block-name or wp-block-block-name
-        $className = 'wp-block-' . str_replace('/', '-', $fullBlockName);
+        $className = 'wp-block-'.str_replace('/', '-', $fullBlockName);
 
         // Replace {{BLOCK_CLASS_NAME}} placeholder (used in nynaeve-* stubs)
         $content = str_replace('{{BLOCK_CLASS_NAME}}', $className, $content);
@@ -478,13 +482,14 @@ PHP;
 
         return $content;
     }
-    
+
     /**
      * Replace example CSS class name with the generated class name in JS files.
      */
     protected function replaceJsClassName(string $content, string $fullBlockName): string
     {
-        $className = 'wp-block-' . str_replace('/', '-', $fullBlockName);
+        $className = 'wp-block-'.str_replace('/', '-', $fullBlockName);
+
         // Replace the placeholder class literal.
         return str_replace('.wp-block-vendor-example-block', ".{$className}", $content);
     }
@@ -494,7 +499,8 @@ PHP;
      */
     protected function replaceEditorClassName(string $content, string $fullBlockName): string
     {
-        $className = 'wp-block-' . str_replace('/', '-', $fullBlockName);
+        $className = 'wp-block-'.str_replace('/', '-', $fullBlockName);
+
         // Replace the {{BLOCK_CLASS_NAME}} placeholder
         return str_replace('{{BLOCK_CLASS_NAME}}', $className, $content);
     }
@@ -522,13 +528,14 @@ domReady(() => {
 });
 JS; // Ensure this is at the start of the line with no preceding whitespace
             $this->files->put($jsPath, $initialContent);
+
             return null; // Created new file
         } else {
             $jsContent = $this->files->get($jsPath);
 
             $globPattern = './blocks/**/index.js';
             // Use regex for a more robust check of the import line existence
-            if (! preg_match('/import\.meta\.glob\(\s*[\'"]' . preg_quote($globPattern, '/') . '[\'"]/', $jsContent)) {
+            if (! preg_match('/import\.meta\.glob\(\s*[\'"]'.preg_quote($globPattern, '/').'[\'"]/', $jsContent)) {
                 // Use NOWDOC for the code to add
                 $jsToAdd = <<<'JS'
 
@@ -539,7 +546,8 @@ import.meta.glob('./blocks/**/index.js', { eager: true });
 
 JS; // Ensure this is at the start of the line with no preceding whitespace
                 // Prepend the import code to the existing content
-                $this->files->put($jsPath, $jsToAdd . $jsContent);
+                $this->files->put($jsPath, $jsToAdd.$jsContent);
+
                 return true; // Added import
             } else {
                 return false; // Already exists
@@ -557,7 +565,7 @@ JS; // Ensure this is at the start of the line with no preceding whitespace
 
         // If config is not loaded (returns null or empty), load directly from package
         if ($templates === null || empty($templates)) {
-            $configPath = dirname(__DIR__, 2) . '/config/sage-native-block.php';
+            $configPath = dirname(__DIR__, 2).'/config/sage-native-block.php';
 
             if (file_exists($configPath)) {
                 $config = require $configPath;
@@ -577,7 +585,7 @@ JS; // Ensure this is at the start of the line with no preceding whitespace
 
         // If config is not loaded, load directly from package
         if ($default === null) {
-            $configPath = dirname(__DIR__, 2) . '/config/sage-native-block.php';
+            $configPath = dirname(__DIR__, 2).'/config/sage-native-block.php';
 
             if (file_exists($configPath)) {
                 $config = require $configPath;
@@ -608,7 +616,7 @@ JS; // Ensure this is at the start of the line with no preceding whitespace
         $templates = $this->getTemplatesConfig();
         foreach ($templates as $template) {
             if (isset($template['category']) &&
-                !in_array($template['category'], ['basic', 'generic'])) {
+                ! in_array($template['category'], ['basic', 'generic'])) {
                 $categoryNames[$template['category']] = true;
             }
         }
@@ -617,7 +625,7 @@ JS; // Ensure this is at the start of the line with no preceding whitespace
         $themeTemplates = $this->getThemeTemplates();
         foreach ($themeTemplates as $templateData) {
             $category = $templateData['category'] ?? 'custom';
-            if (!in_array($category, ['basic', 'generic'])) {
+            if (! in_array($category, ['basic', 'generic'])) {
                 $categoryNames[$category] = true;
             }
         }
@@ -639,9 +647,9 @@ JS; // Ensure this is at the start of the line with no preceding whitespace
     protected function getThemeTemplates(): array
     {
         $themeTemplates = [];
-        $blockTemplatesDir = get_template_directory() . '/block-templates';
+        $blockTemplatesDir = get_template_directory().'/block-templates';
 
-        if (!$this->files->isDirectory($blockTemplatesDir)) {
+        if (! $this->files->isDirectory($blockTemplatesDir)) {
             return $themeTemplates;
         }
 
@@ -649,10 +657,10 @@ JS; // Ensure this is at the start of the line with no preceding whitespace
 
         foreach ($templateFolders as $templateFolder) {
             $templateName = basename($templateFolder);
-            $blockJsonPath = $templateFolder . '/block.json';
+            $blockJsonPath = $templateFolder.'/block.json';
 
             // Only include if block.json exists
-            if (!$this->files->exists($blockJsonPath)) {
+            if (! $this->files->exists($blockJsonPath)) {
                 continue;
             }
 
@@ -676,9 +684,9 @@ JS; // Ensure this is at the start of the line with no preceding whitespace
      */
     protected function loadTemplateMetadata(string $templateFolder): array
     {
-        $metadataPath = $templateFolder . '/template-meta.json';
+        $metadataPath = $templateFolder.'/template-meta.json';
 
-        if (!$this->files->exists($metadataPath)) {
+        if (! $this->files->exists($metadataPath)) {
             return [];
         }
 
@@ -688,12 +696,14 @@ JS; // Ensure this is at the start of the line with no preceding whitespace
 
             if (json_last_error() !== JSON_ERROR_NONE) {
                 $this->warn("Invalid JSON in {$metadataPath}. Using defaults.");
+
                 return [];
             }
 
             return $metadata;
         } catch (\Exception $e) {
             $this->warn("Could not read {$metadataPath}. Using defaults.");
+
             return [];
         }
     }
@@ -706,6 +716,7 @@ JS; // Ensure this is at the start of the line with no preceding whitespace
     {
         $words = explode('-', $name);
         $words = array_map('ucfirst', $words);
+
         return implode(' ', $words);
     }
 
@@ -718,6 +729,7 @@ JS; // Ensure this is at the start of the line with no preceding whitespace
 
         if (empty($categories)) {
             $this->warn('No template categories found. Using basic.');
+
             return 'basic';
         }
 
@@ -750,6 +762,7 @@ JS; // Ensure this is at the start of the line with no preceding whitespace
 
         if (empty($allTemplates)) {
             $this->warn('No templates found. Using default.');
+
             return $this->getDefaultTemplate();
         }
 
@@ -762,6 +775,7 @@ JS; // Ensure this is at the start of the line with no preceding whitespace
 
         if (empty($allTemplates)) {
             $this->warn("No templates found for category '{$category}'. Using default.");
+
             return $this->getDefaultTemplate();
         }
 
@@ -839,6 +853,7 @@ JS; // Ensure this is at the start of the line with no preceding whitespace
     protected function isThemeTemplate(string $template): bool
     {
         $themeTemplates = $this->getThemeTemplates();
+
         return isset($themeTemplates[$template]);
     }
 }
