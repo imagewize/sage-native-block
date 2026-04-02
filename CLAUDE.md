@@ -95,6 +95,12 @@ Nynaeve templates (`stubs/themes/nynaeve/`) are production-ready and differ from
 - `editor.jsx` uses `{{BLOCK_CLASS_NAME}}` placeholder (not the legacy CSS class)
 - Require `theme.json` font families (`montserrat`, `open-sans`) and color palette to be defined in the consuming theme
 
+### `editorScript` must NOT be in block.json (CRITICAL)
+
+Do **not** add `"editorScript": "file:./index.js"` to any stub's `block.json`. This is a `@wordpress/scripts` (webpack) convention. Sage themes use **Vite**, which bundles all blocks via `import.meta.glob('./blocks/**/index.js', { eager: true })` in `editor.js`. Adding `editorScript` causes WordPress to serve the raw unbundled source file to the browser, which fails with a syntax error (`Unexpected token '{'`) because browsers cannot resolve bare `@wordpress/*` imports or parse `.jsx` extensions.
+
+**Correct:** only `"editorStyle"`, `"style"`, and `"viewScript"` fields belong in stub `block.json` files.
+
 ## Git Conventions
 
 - **Atomic commits** — each commit should represent one logical change. Don't bundle unrelated fixes or features.
