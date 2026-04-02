@@ -9,7 +9,6 @@
     "keywords": [],
     "example": {},
     "textdomain": "vendor",
-    "editorScript": "file:./index.js",
     "editorStyle": "file:./editor.css",
     "style": "file:./style.css",
     "viewScript": "file:./view.js",
